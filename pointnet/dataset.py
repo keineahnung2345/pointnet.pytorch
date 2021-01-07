@@ -153,7 +153,8 @@ class ModelNetDataset(data.Dataset):
         self.fns = []
         with open(os.path.join(root, '{}.txt'.format(self.split)), 'r') as f:
             for line in f:
-                self.fns.append(line.strip())
+                self.fns.append(line.strip().rsplit('_', 1)[0] + '/' + line.strip() +
+'.txt')
 
         self.cat = {}
         with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../misc/modelnet_id.txt'), 'r') as f:
@@ -167,9 +168,8 @@ class ModelNetDataset(data.Dataset):
     def __getitem__(self, index):
         fn = self.fns[index]
         cls = self.cat[fn.split('/')[0]]
-        with open(os.path.join(self.root, fn), 'rb') as f:
-            plydata = PlyData.read(f)
-        pts = np.vstack([plydata['vertex']['x'], plydata['vertex']['y'], plydata['vertex']['z']]).T
+        pts = np.loadtxt(os.path.join(self.root, fn), delimiter=',')
+        pts = pts[:,:3]
         choice = np.random.choice(len(pts), self.npoints, replace=True)
         point_set = pts[choice, :]
 

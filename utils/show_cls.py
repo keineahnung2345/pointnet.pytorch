@@ -20,10 +20,9 @@ parser.add_argument('--num_points', type=int, default=2500, help='input batch si
 opt = parser.parse_args()
 print(opt)
 
-test_dataset = ShapeNetDataset(
-    root='shapenetcore_partanno_segmentation_benchmark_v0',
-    split='test',
-    classification=True,
+test_dataset = ModelNetDataset(
+    root=opt.dataset,
+    split='modelnet40_test',
     npoints=opt.num_points,
     data_augmentation=False)
 
